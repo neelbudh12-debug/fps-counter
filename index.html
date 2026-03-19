@@ -1,52 +1,243 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>macOS FPS Overlay</title>
-<style>
-body {
-  background: #0b0b0b;
-  color: #00ff88;
-  font-family: monospace;
-  text-align: center;
-  padding-top: 60px;
-}
-.container {
-  max-width: 700px;
-  margin: auto;
-}
-h1 { font-size: 42px; }
-p { color: #aaa; }
-a {
-  color: #00ff88;
-  text-decoration: none;
-  border: 1px solid #00ff88;
-  padding: 10px 18px;
-  border-radius: 6px;
-}
-a:hover { background: #00ff88; color: #000; }
-</style>
-</head>
-
-<body>
-<div class="container">
-
-<h1>macOS FPS Overlay</h1>
-
-<p>
-Lightweight floating FPS counter for macOS.
-</p>
-
-<p>
-Shows FPS and 1% lows in a click-through overlay.
-</p>
-
-<br>
-
-<a href="https://github.com/YOUR_USERNAME/macOS-FPS-Overlay">
-View on GitHub
-</a>
-
-</div>
-</body>
-</html>
+diff --git a//Users/neelbudhiraja/Documents/New project/index.html b//Users/neelbudhiraja/Documents/New project/index.html
+new file mode 100644
+--- /dev/null
++++ b//Users/neelbudhiraja/Documents/New project/index.html
+@@ -0,0 +1,238 @@
++<!DOCTYPE html>
++<html lang="en">
++<head>
++<meta charset="UTF-8">
++<meta name="viewport" content="width=device-width, initial-scale=1.0">
++<title>FPS Overlay Launcher</title>
++<style>
++  :root {
++    --bg: #08110d;
++    --panel: rgba(9, 20, 15, 0.9);
++    --text: #8fffc6;
++    --muted: #9ab7a8;
++    --accent: #27f58b;
++    --border: rgba(143, 255, 198, 0.25);
++  }
++
++  * {
++    box-sizing: border-box;
++  }
++
++  body {
++    margin: 0;
++    min-height: 100vh;
++    display: grid;
++    place-items: center;
++    padding: 24px;
++    background:
++      radial-gradient(circle at top, rgba(39, 245, 139, 0.14), transparent 35%),
++      linear-gradient(180deg, #050806 0%, var(--bg) 100%);
++    color: var(--text);
++    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
++  }
++
++  .container {
++    width: min(720px, 100%);
++    padding: 36px;
++    border: 1px solid var(--border);
++    border-radius: 20px;
++    background: var(--panel);
++    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
++    text-align: center;
++  }
++
++  h1 {
++    margin: 0 0 12px;
++    font-size: clamp(2rem, 5vw, 3.5rem);
++    line-height: 1;
++  }
++
++  p {
++    margin: 0 auto 16px;
++    max-width: 56ch;
++    color: var(--muted);
++    line-height: 1.5;
++  }
++
++  .actions {
++    margin-top: 28px;
++  }
++
++  button {
++    border: 1px solid var(--accent);
++    background: transparent;
++    color: var(--accent);
++    border-radius: 999px;
++    padding: 14px 24px;
++    font-size: 1rem;
++    cursor: pointer;
++    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
++  }
++
++  button:hover {
++    background: var(--accent);
++    color: #041109;
++    transform: translateY(-1px);
++  }
++
++  .note {
++    margin-top: 18px;
++    font-size: 0.92rem;
++  }
++</style>
++</head>
++<body>
++  <main class="container">
++    <h1>Browser FPS Overlay</h1>
++    <p>
++      This opens a small <code>about:blank</code> popup that measures animation frame timing with
++      <code>requestAnimationFrame()</code> and shows a live FPS counter plus the current time.
++    </p>
++    <p class="note">
++      Browser limit: this popup cannot float above every app or stay on top of true fullscreen content.
++      That part needs a native desktop app.
++    </p>
++    <div class="actions">
++      <button id="launchButton" type="button">Open FPS Overlay</button>
++    </div>
++  </main>
++
++  <script>
++    const popupMarkup = `<!DOCTYPE html>
++<html lang="en">
++<head>
++<meta charset="UTF-8">
++<meta name="viewport" content="width=device-width, initial-scale=1.0">
++<title>FPS Overlay</title>
++<style>
++  :root {
++    color-scheme: dark;
++  }
++
++  * {
++    box-sizing: border-box;
++    user-select: none;
++  }
++
++  html, body {
++    margin: 0;
++    width: 100%;
++    height: 100%;
++    overflow: hidden;
++    background: transparent;
++    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
++  }
++
++  body {
++    padding: 12px;
++  }
++
++  .overlay {
++    width: fit-content;
++    min-width: 180px;
++    padding: 12px 14px;
++    border-radius: 14px;
++    border: 1px solid rgba(130, 255, 190, 0.28);
++    background: rgba(3, 10, 7, 0.82);
++    color: #9dffcb;
++    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
++    backdrop-filter: blur(12px);
++    -webkit-backdrop-filter: blur(12px);
++  }
++
++  .label {
++    font-size: 11px;
++    letter-spacing: 0.18em;
++    text-transform: uppercase;
++    color: rgba(157, 255, 203, 0.7);
++  }
++
++  .value {
++    margin-top: 2px;
++    font-size: 34px;
++    line-height: 1;
++    font-weight: 700;
++  }
++
++  .clock {
++    margin-top: 10px;
++    font-size: 15px;
++    color: rgba(157, 255, 203, 0.88);
++  }
++
++  .hint {
++    margin-top: 8px;
++    font-size: 11px;
++    color: rgba(157, 255, 203, 0.58);
++  }
++</style>
++</head>
++<body>
++  <div class="overlay">
++    <div class="label">FPS</div>
++    <div class="value" id="fpsValue">0</div>
++    <div class="clock" id="clockValue">--:--:--</div>
++    <div class="hint">Measures this popup's render loop only</div>
++  </div>
++
++  <script>
++    const fpsValue = document.getElementById('fpsValue');
++    const clockValue = document.getElementById('clockValue');
++
++    let frameCount = 0;
++    let lastFrame = performance.now();
++    let lastSample = lastFrame;
++
++    function updateClock() {
++      const now = new Date();
++      clockValue.textContent = now.toLocaleTimeString([], {
++        hour: '2-digit',
++        minute: '2-digit',
++        second: '2-digit'
++      });
++    }
++
++    function tick(now) {
++      frameCount += 1;
++      const elapsed = now - lastSample;
++
++      if (elapsed >= 500) {
++        const fps = Math.round((frameCount * 1000) / elapsed);
++        fpsValue.textContent = String(fps);
++        frameCount = 0;
++        lastSample = now;
++      }
++
++      lastFrame = now;
++      requestAnimationFrame(tick);
++    }
++
++    updateClock();
++    setInterval(updateClock, 1000);
++    requestAnimationFrame(tick);
++  <\/script>
++</body>
++</html>`;
++
++    function openOverlay() {
++      const popup = window.open(
++        "about:blank",
++        "fps-overlay-window",
++        "popup=yes,width=240,height=150,left=80,top=80,resizable=yes"
++      );
++
++      if (!popup) {
++        alert("Popup blocked. Allow popups for this page and try again.");
++        return;
++      }
++
++      popup.document.open();
++      popup.document.write(popupMarkup);
++      popup.document.close();
++      popup.focus();
++    }
++
++    document.getElementById("launchButton").addEventListener("click", openOverlay);
++  </script>
++</body>
++</html>
